@@ -53,7 +53,11 @@ assign(Client_SQLite3.prototype, {
   acquireRawConnection() {
     const client = this;
     return new Promise(function(resolve, reject) {
-      const db = new client.driver.Database(client.connectionSettings.filename, function(err) {
+      var mode = client.driver.OPEN_READWRITE | client.driver.OPEN_CREATE;
+      if (client.config.readOnly) {
+        mode = client.driver.OPEN_READONLY;
+      }
+      const db = new client.driver.Database(client.connectionSettings.filename, mode, function(err) {
         if (err) return reject(err)
         resolve(db)
       })
